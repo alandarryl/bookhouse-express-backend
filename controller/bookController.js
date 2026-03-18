@@ -44,7 +44,7 @@ const getAllBook = async (req, res) =>{
 
 
 //get one book
-const getOneBokk = async (req,res) =>{
+const getOneBook = async (req,res) =>{
     try{
 
         const book = await Book.findById(req.params.id).populate('id_user', 'pseudo email');
