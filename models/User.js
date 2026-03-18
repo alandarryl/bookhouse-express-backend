@@ -1,5 +1,6 @@
 
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
     {
@@ -24,17 +25,22 @@ const userSchema = new mongoose.Schema(
         role : {
             type: Number,
             default: 0
-        },
-        date_inscription : {
-            type: Date,
-            default: Date.now
-        },
-        status: {
-            type: String,
-            default: ''
-        },
-    }
+        }
+    },{timestamps: true}
 );
+
+//method to compare the password enter withthe hach version
+userSchema.methods.matchPassword = async function (enteredPassword){
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
+//Middleware mongoose : hach the password before saving it
+userSchema.pre('save', async function (next){
+    if(!this.isModified('password')) return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+});
+
 
 module.exports = mongoose.model("User", userSchema);
 
