@@ -26,7 +26,7 @@ const createBook = async (req,res) =>{
 
     } catch (error) {
         console.log({message: error.message});
-        res.status(500).json({message: "Erreur serveur"});
+        res.status(500).json({message: `Erreur serveur ${error} `});
     }
 }
 
@@ -34,12 +34,18 @@ const createBook = async (req,res) =>{
 //get all book 
 const getAllBook = async (req, res) =>{
     try {
+
+        //get the parameter sort in the url : /api/books?sort=oldest
+        const sortOrder = req.query.sort === 'oldest' ? 1 : -1;
+
         const books = await Book.find()
+                .populate('id_user', 'username email')
+                .sort({createAt: sortOrder}); // -1 = recent, 1 = oldest
 
         res.status(200).json(books);
 
     } catch (error) {
-        res.status(500).json({message: "Erreur serveur"});
+        res.status(500).json({message: `Erreur serveur ${error} `});
     }
 }
 
@@ -57,18 +63,70 @@ const getOneBook = async (req,res) =>{
         res.status(200).json(book);
 
     }catch(error){
-        res.status(500).json({message: "Erreur serveur"});
+        res.status(500).json({message: `Erreur serveur ${error} `});
     }
 }
 
 //delet one book (only allow by the user)
+const deleteBook = async (req, res ) =>{
+    try{
+        //
+        const book = await Book.findById(req.params.id);
+
+        if(!book) return res.status(404).json({message: "Livre non trouvé"});
+
+        //check the property
+        if(book.id_user.toString() !== req.user._id.toString() ){
+            return res.status(401).json({message: "Non authorisé a supprimer ce livre"});
+        }
+
+        await book.deleteOne();
+
+        res.status(200).json({message: "Livre supprimé avec succès"});
+
+
+    }catch(error){
+        res.status(500).json({message: `Erreur serveur ${error} `});
+    }
+}
 
 
 //update one book (only the user can do that)
+const updateBook = async (req, res ) =>{
+    try{
+        //
+        let book = await Book.findById(req.params.id);
+
+        if(!book) return res.status(404).json({message: "Livre non trouvé"});
+
+        //check if user is the owner of the book
+        if(book.id_user.toString() !== req.user._id.toString() ){
+            return res.status(401).json({message: "Non autorisé a modifier ce livre"})
+        }
+
+        book = await Book.findByIdAndUpdate(req.params.id, req.body, {new: true});
+
+        res.status(200).json(book);
+
+    }catch(error){
+        res.status(500).json({message: `Erreur serveur ${error} `});
+    }
+}
 
 
 //get all book publish by one user
+const getUserBooks = async (req, res ) =>{
+    try{
+        //
 
+        const books = await Book.find({id_user: req.params.userId}).sort({createAt: -1});
+
+        res.status(200).json(books); 
+
+    }catch(error){
+        res.status(500).json({message: `Erreur serveur ${error} `});
+    }
+}
 
 //order by the recent one
 
@@ -79,5 +137,8 @@ const getOneBook = async (req,res) =>{
 module.exports = {
     createBook,
     getAllBook,
-    getOneBook
+    getOneBook,
+    getUserBooks,
+    updateBook,
+    deleteBook
 };
