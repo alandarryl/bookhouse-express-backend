@@ -24,7 +24,7 @@ app.use(express.json());
 //book api
 app.use('/api/books', require('./routes/bookRoutes'));
 //user api
-app.use('/api/user', require('./routes/userRoutes'));
+app.use('/api/user', require('./routes/authRoutes'));
 
 //if route note found
 app.use((req, res) =>{
