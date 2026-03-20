@@ -76,9 +76,9 @@ const deleteBook = async (req, res ) =>{
         if(!book) return res.status(404).json({message: "Livre non trouvé"});
 
         //check the property
-        if(book.id_user.toString() !== req.user._id.toString() ){
-            return res.status(401).json({message: "Non authorisé a supprimer ce livre"});
-        }
+        // if(book.id_user.toString() !== req.user._id.toString() ){
+        //     return res.status(401).json({message: "Non authorisé a supprimer ce livre"});
+        // }
 
         await book.deleteOne();
 
@@ -100,9 +100,9 @@ const updateBook = async (req, res ) =>{
         if(!book) return res.status(404).json({message: "Livre non trouvé"});
 
         //check if user is the owner of the book
-        if(book.id_user.toString() !== req.user._id.toString() ){
-            return res.status(401).json({message: "Non autorisé a modifier ce livre"})
-        }
+        // if(book.id_user.toString() !== req.user._id.toString() ){
+        //     return res.status(401).json({message: "Non autorisé a modifier ce livre"})
+        // }
 
         book = await Book.findByIdAndUpdate(req.params.id, req.body, {new: true});
 

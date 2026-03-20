@@ -25,15 +25,15 @@ router.route("/create").post(createBook);
 router.route("/getOne/:id").get(getOneBook);
 
 //route to update
-router.route("/update").put(updateBook);
+router.route("/update/:id").put(updateBook);
 
 //route to delete
-router.route("/delete").delete(deleteBook);
+router.route("/delete/:id").delete(deleteBook);
 
 // Route pour le profil d'un utilisateur
 router.get('/user/:userId', getUserBooks);
 
-module.exports = router
+module.exports = router;
 
 
 
