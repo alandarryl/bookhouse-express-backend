@@ -8,14 +8,19 @@ const registerUser = async (req, res) =>{
     try {
         const {username, email, image_profil, password } = req.body;
 
-        const checkUser = await User.findOne({email});
+        const checkUser = await User.findOne({
+            $or: [{ email }, { username }]
+        });
 
-        if(userExist) return res.status(400).json({message : "this email or username is awailable"});
+        console.log(checkUser);
+
+        if(checkUser) return res.status(400).json({message : "this email or username is available"});
 
         const user = await User.create({username, email, image_profil, password});
 
         if(user){
             res.status(201).json({
+                message: "user registered successfully",
                 _id: user._id,
                 username: user.username,
                 token: generateToken(user._id)
@@ -25,7 +30,17 @@ const registerUser = async (req, res) =>{
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({message: "Erreur lors de l'inscription"});
+
+        // 🔥 Gestion spécifique Mongo duplicate key
+        if (error.code === 11000) {
+            return res.status(400).json({
+                message: "Email or username already used"
+            });
+        }
+
+        res.status(500).json({
+            message: "Erreur lors de l'inscription"
+        });
     }
 }
 
@@ -37,6 +52,7 @@ const loginUser = async (req, res)=>{
 
         if(user && (await user.matchPassword(password)) ){
             res.json({
+                message: "user login successfully",
                 _id: user._id,
                 username: user.username,
                 token: generateToken(user._id)
