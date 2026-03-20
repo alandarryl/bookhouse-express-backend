@@ -5,11 +5,13 @@ const Book = require('../models/Book');
 //create a book 
 const createBook = async (req,res) =>{
     try {
-        const {titre, description, annonce_image, date_publication, auteur, nb_exemplaire, id_user} = req.body;
+        const {titre, description, annonce_image, date_publication, auteur, nb_exemplaire} = req.body;
 
         // Validation simple
-        if (!titre || !description || !auteur || !id_user) {
-            return res.status(400).json({ message: "Merci de remplir tous les champs obligatoires (titre, desc, auteur, id_user)" });
+        if (!titre || !description || !auteur) {
+            return res.status(400).json({ 
+                message: "Merci de remplir tous les champs obligatoires" 
+            });
         }
 
         const newBook = new Book({
@@ -18,7 +20,7 @@ const createBook = async (req,res) =>{
             annonce_image,
             auteur,
             nb_exemplaire,
-            id_user // L'ID de l'utilisateur qui poste l'annonce
+            id_user: req.user._id
         });
 
         const savedBook = await newBook.save();
@@ -26,7 +28,7 @@ const createBook = async (req,res) =>{
 
     } catch (error) {
         console.log({message: error.message});
-        res.status(500).json({message: `Erreur serveur ${error} `});
+        res.status(500).json({message: `Erreur serveur ${error.message} `});
     }
 }
 
@@ -40,12 +42,12 @@ const getAllBook = async (req, res) =>{
 
         const books = await Book.find()
                 .populate('id_user', 'username email')
-                .sort({createAt: sortOrder}); // -1 = recent, 1 = oldest
+                .sort({createdAt: sortOrder}); // -1 = recent, 1 = oldest
 
         res.status(200).json(books);
 
     } catch (error) {
-        res.status(500).json({message: `Erreur serveur ${error} `});
+        res.status(500).json({message: `Erreur serveur ${error.message} `});
     }
 }
 
@@ -54,7 +56,7 @@ const getAllBook = async (req, res) =>{
 const getOneBook = async (req,res) =>{
     try{
 
-        const book = await Book.findById(req.params.id).populate('id_user', 'pseudo email');
+        const book = await Book.findById(req.params.id).populate('id_user', 'username email');
 
         if (!book) {
             return res.status(404).json({ message: "Le livre n'a pas été trouvé" });
@@ -63,7 +65,7 @@ const getOneBook = async (req,res) =>{
         res.status(200).json(book);
 
     }catch(error){
-        res.status(500).json({message: `Erreur serveur ${error} `});
+        res.status(500).json({message: `Erreur serveur ${error.message} `});
     }
 }
 
@@ -75,10 +77,10 @@ const deleteBook = async (req, res ) =>{
 
         if(!book) return res.status(404).json({message: "Livre non trouvé"});
 
-        //check the property
-        // if(book.id_user.toString() !== req.user._id.toString() ){
-        //     return res.status(401).json({message: "Non authorisé a supprimer ce livre"});
-        // }
+        // check the property
+        if(book.id_user.toString() !== req.user._id.toString() ){
+            return res.status(403).json({message: "Non authorisé a supprimer ce livre"});
+        }
 
         await book.deleteOne();
 
@@ -86,7 +88,7 @@ const deleteBook = async (req, res ) =>{
 
 
     }catch(error){
-        res.status(500).json({message: `Erreur serveur ${error} `});
+        res.status(500).json({message: `Erreur serveur ${error.message} `});
     }
 }
 
@@ -100,16 +102,29 @@ const updateBook = async (req, res ) =>{
         if(!book) return res.status(404).json({message: "Livre non trouvé"});
 
         //check if user is the owner of the book
-        // if(book.id_user.toString() !== req.user._id.toString() ){
-        //     return res.status(401).json({message: "Non autorisé a modifier ce livre"})
-        // }
+        if(book.id_user.toString() !== req.user._id.toString() ){
+            return res.status(403).json({message: "Non autorisé a modifier ce livre"})
+        }
 
-        book = await Book.findByIdAndUpdate(req.params.id, req.body, {new: true});
+
+        const allowedUpdates = {
+            titre: req.body.titre,
+            description: req.body.description,
+            annonce_image: req.body.annonce_image,
+            auteur: req.body.auteur,
+            nb_exemplaire: req.body.nb_exemplaire
+        }
+
+        book = await Book.findByIdAndUpdate(
+            req.params.id,
+            allowedUpdates,
+            {new: true}
+        );
 
         res.status(200).json(book);
 
     }catch(error){
-        res.status(500).json({message: `Erreur serveur ${error} `});
+        res.status(500).json({message: `Erreur serveur ${error.message} `});
     }
 }
 
@@ -119,12 +134,12 @@ const getUserBooks = async (req, res ) =>{
     try{
         //
 
-        const books = await Book.find({id_user: req.params.userId}).sort({createAt: -1});
+        const books = await Book.find({id_user: req.user._id}).sort({createdAt: -1});
 
         res.status(200).json(books); 
 
     }catch(error){
-        res.status(500).json({message: `Erreur serveur ${error} `});
+        res.status(500).json({message: `Erreur serveur ${error.message} `});
     }
 }
 
