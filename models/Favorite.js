@@ -6,11 +6,14 @@ const favoriteSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    id_annonce:{
+    book_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Book",
         required: true
     }
-});
+},{timestamps: true});
 
-modeul.exports = mongoose.model("Favorite", favoriteSchema);
+//prevent duplicate
+favoriteSchema.index({user_id: 1, book_id: 1}, {unique: true});
+
+module.exports = mongoose.model("Favorite", favoriteSchema);

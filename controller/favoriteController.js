@@ -1,5 +1,5 @@
 
-const Favorite = requir('../models/Favorite.js');
+const Favorite = require('../models/Favorite.js');
 const Book = require('../models/Book');
 
 //add a book as favorite
@@ -7,18 +7,30 @@ const addFavorite = async (req,res) =>{
     try {
         //
 
-        const checkBook = await Book.find(req.params.id);
+        const book = await Book.findById(req.params.id);
 
-        if (!checkBook) return res.status(404).json({message: "the book does not exist" });
+        if (!book) return res.status(404).json({message: "book not found" });
 
-        const newFavorite = new Favorite({
+
+
+        //check if already favorite
+        const existingFavorite = await Favorite.findOne({
             user_id: req.user._id,
-            id_annonce: req.params.id
+            book_id: req.params.id
+        });
+
+        if(existingFavorite){
+            return res.status(200).json({message: "Already favorite" });
+        }
+
+
+        const newFavorite = await Favorite.create({
+            user_id: req.user._id,
+            book_id: req.params.id
         })
 
-        const savedFavorite = await newFavorite.save();
 
-        res.status(201).json({status: "like" });
+        res.status(201).json({status: "liked", data: newFavorite });
 
     } catch (error) {
         //
@@ -31,10 +43,18 @@ const deleteFavorite = async (req, res) =>{
     try {
         //
 
-        const checkBook = await Book.find(req.params.id);
-        const favoriteOwner = await Favorite.find({id_annonce: req.params.id});
+        const favorite = await Favorite.findOneAndDelete({
+            book_id: req.params.id,
+            user_id: req.user._id
+        });
 
-        if (!checkBook) return res.status(404).json({message: "the book does not exist" });
+        if(!favorite){
+            return res.status(404).json({
+                message: "Favorite not found"
+            });
+        }
+
+        res.status(200).json({status: "unliked"});
 
     } catch (error) {
         //
@@ -47,6 +67,13 @@ const deleteFavorite = async (req, res) =>{
 const getAllUserFavorite = async (req, res) =>{
     try {
         //
+
+        const allFavorites = await Favorite.find({
+            user_id: req.user._id
+        }).populate('book_id');
+
+        res.status(200).json(allFavorites);
+
     } catch (error) {
         //
         res.status(500).json({message: `Erreur serveur ${error.message}`})

@@ -25,6 +25,8 @@ app.use(cookieParser())
 app.use('/api/books', require('./routes/bookRoutes'));
 //user api
 app.use('/api/user', require('./routes/authRoutes'));
+//favorite api
+app.use('/api/favorite', require('./routes/favoriteRoutes'));
 
 //if route note found
 app.use((req, res) =>{
