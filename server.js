@@ -27,6 +27,10 @@ app.use('/api/books', require('./routes/bookRoutes'));
 app.use('/api/user', require('./routes/authRoutes'));
 //favorite api
 app.use('/api/favorite', require('./routes/favoriteRoutes'));
+//discussion api
+app.use('/api/discussion', require('./routes/discussionRoutes'));
+//message api
+app.use('/api/messages', require('./routes/messageRoutes'));
 
 //if route note found
 app.use((req, res) =>{
