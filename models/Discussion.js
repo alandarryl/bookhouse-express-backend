@@ -1,8 +1,22 @@
 
 const mongoose = require("mongoose");
 
-const discussionScema = new mongoose.Schema({
-    //
-});
+const discussionSchema = new mongoose.Schema({
+    participants: 
+        {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: "User",
+            require: true
+        }
+    ,
+        lastMessage: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Message"
+        }
+    
+}, {timestamps: true});
 
-module.exports = mongoose.model("Discussion", discussionScema);
+//eviter duplication
+discussionSchema.index({participants: 1});
+
+module.exports = mongoose.model("Discussion", discussionSchema);

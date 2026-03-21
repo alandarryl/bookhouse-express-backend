@@ -2,33 +2,26 @@
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
-    id_disc: {
+    discussion: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Discussion',
         required: true
     },
-    id_expe: {
+    sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    message: {
+    content: {
         type: String,
         required: true
     },
-    lu: {
+    isRead: {
         type: String,
-        enum: ['yes', 'no'],
-        default: "no"
-    },
-    date: {
-        type: Date,
-        default: Date.now
+        type: Boolean,
+        default: false
     }
-});
+}, {timestamps: true}
+);
 
 module.exports = mongoose.model("Message", messageSchema);
-
-
-
-
