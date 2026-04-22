@@ -19,6 +19,30 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser())
 
+
+const cors = require('cors');
+
+const allowedOrigins = [
+    'http://localhost:5173', // Ton React en local (Vite)
+    'https://ton-projet-frontend.vercel.app' // Ton futur lien Vercel
+    ];
+
+    app.use(cors({
+    origin: function (origin, callback) {
+        // Autorise les requêtes sans origine (comme Postman ou les outils de test)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'La politique CORS de ce site ne permet pas l\'accès depuis l\'origine spécifiée.';
+        return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true, // INDISPENSABLE si tu utilises cookie-parser
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 //definition des route
 
 //book api
