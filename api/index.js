@@ -39,11 +39,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 // --- ROUTES ---
-app.use('/api/books', require('./routes/bookRoutes'));
-app.use('/api/user', require('./routes/authRoutes'));
-app.use('/api/favorite', require('./routes/favoriteRoutes'));
-app.use('/api/discussion', require('./routes/discussionRoutes'));
-app.use('/api/messages', require('./routes/messageRoutes'));
+// Remplace tes imports de routes actuels par ceux-ci :
+app.use('/api/books', require('../routes/bookRoutes')); // Ajout de ../
+app.use('/api/user', require('../routes/authRoutes'));   // Ajout de ../
+app.use('/api/favorite', require('../routes/favoriteRoutes')); // Ajout de ../
+app.use('/api/discussion', require('../routes/discussionRoutes')); // Ajout de ../
+app.use('/api/messages', require('../routes/messageRoutes')); 
 
 // gestion 404
 app.use((req, res) => {
