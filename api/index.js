@@ -2,7 +2,7 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors'); // <--- GARDER UNIQUEMENT CELUI-CI
-const connectDb = require('./config/db');
+const connectDb = require('../config/db');
 
 // configuration de l'environnement
 dotenv.config();
