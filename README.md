@@ -51,12 +51,14 @@ Les routes marquées d'un 🔒 nécessitent un token d'authentification (via les
 ## 🔐 Authentification (/user)
 
 ** Méthode,Route,Description,Corps de la requête (JSON)**
+
     - POST,/register,Créer un compte,"username, email, password"
     - POST,/login,Se connecter,"email, password"
 
 ## 📚 Livres (/books)
 
 **Méthode,Route,Description,Protégé**
+
     - GET,/All,Récupérer tous les livres,Non
     - GET,/getOne/:id,Détails d'un livre,Non
     - POST,/create,Ajouter un livre,🔒 Oui
@@ -67,6 +69,7 @@ Les routes marquées d'un 🔒 nécessitent un token d'authentification (via les
 ## 💬 Discussions & Messagerie (/discussion & /messages)
 
 **Méthode,Route,Description,Destination**
+
     - POST,/discussion,Créer/Récupérer une conv.,receiverId
     - GET,/discussion/my,Liste des discussions,🔒
     - POST,/messages/send,Envoyer un message,"discussionId, content"
@@ -75,6 +78,7 @@ Les routes marquées d'un 🔒 nécessitent un token d'authentification (via les
 ## ❤️ Favoris (/favorite)
 
 **Méthode,Route,Description**
+
     - POST,/like/:id,Ajouter aux favoris 🔒
     - DELETE,/unlike/:id,Retirer des favoris 🔒
     - GET,/my-favorite,Voir mes favoris 🔒
