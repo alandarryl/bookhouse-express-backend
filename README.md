@@ -46,7 +46,7 @@ THis is a reconstruction of old php and html5 project, but using the mern tech (
 
 # 🚀 API Documentation
 
-Toutes les routes sont préfixées par [https://ton-lien-vercel.app/api](https://ton-lien-vercel.app/api).
+Toutes les routes sont préfixées par [https://bookhouse-express-backend.vercel.app/api](https://bookhouse-express-backend.vercel.app/api).
 Les routes marquées d'un 🔒 nécessitent un token d'authentification (via les cookies/credentials).
 
 ## 🔐 Authentification (/user)
