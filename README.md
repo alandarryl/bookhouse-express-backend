@@ -44,3 +44,37 @@ THis is a reconstruction of old php and html5 project, but using the mern tech (
 
 ---
 
+🚀 API Documentation
+Toutes les routes sont préfixées par [https://ton-lien-vercel.app/api](https://ton-lien-vercel.app/api).
+Les routes marquées d'un 🔒 nécessitent un token d'authentification (via les cookies/credentials).
+
+🔐 Authentification (/user)
+Méthode,Route,Description,Corps de la requête (JSON)
+POST,/register,Créer un compte,"username, email, password"
+POST,/login,Se connecter,"email, password"
+
+📚 Livres (/books)
+Méthode,Route,Description,Protégé
+GET,/All,Récupérer tous les livres,Non
+GET,/getOne/:id,Détails d'un livre,Non
+POST,/create,Ajouter un livre,🔒 Oui
+PUT,/update/:id,Modifier un livre,🔒 Oui
+DELETE,/delete/:id,Supprimer un livre,🔒 Oui
+GET,/user/:userId,Livres postés par un utilisateur,🔒 Oui
+
+💬 Discussions & Messagerie (/discussion & /messages)
+Méthode,Route,Description,Destination
+POST,/discussion,Créer/Récupérer une conv.,receiverId
+GET,/discussion/my,Liste des discussions,🔒
+POST,/messages/send,Envoyer un message,"discussionId, content"
+GET,/messages/:discussionId,Historique des messages,🔒
+
+❤️ Favoris (/favorite)
+Méthode,Route,Description
+POST,/like/:id,Ajouter aux favoris 🔒
+DELETE,/unlike/:id,Retirer des favoris 🔒
+GET,/my-favorite,Voir mes favoris 🔒
+
+
+
+
