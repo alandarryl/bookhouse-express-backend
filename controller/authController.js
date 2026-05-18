@@ -2,27 +2,6 @@
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 
-// Dans ton fichier de routes auth
-const { protect } = require('../middleware/authMiddleware');
-
-// Route pour récupérer les infos de l'utilisateur connecté via son cookie
-router.get('/profile', protect, async (req, res) => {
-    try {
-        // req.user est déjà rempli par ton middleware protect (sans le password)
-        if (!req.user) {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-        res.status(200).json(req.user);
-    } catch (error) {
-        res.status(500).json({ message: "Erreur serveur" });
-    }
-});
-
-// Route de Déconnexion (pour détruire le cookie)
-router.post('/logout', (req, res) => {
-    res.clearCookie("token"); // Supprime le cookie nommé 'token'
-    res.status(200).json({ message: "Déconnexion réussie" });
-});
 
 const registerUser = async (req, res) => {
     try {
