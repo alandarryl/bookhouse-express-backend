@@ -1,7 +1,7 @@
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors'); // <--- GARDER UNIQUEMENT CELUI-CI
+const cors = require('cors'); 
 const connectDb = require('../config/db');
 
 // configuration de l'environnement
@@ -12,15 +12,14 @@ connectDb();
 
 const app = express();
 
-// --- CONFIGURATION CORS (UNE SEULE FOIS) ---
+// --- CONFIGURATION CORS SÉCURISÉE ---
 const allowedOrigins = [
     'http://localhost:5173', 
-    'https://ton-projet-frontend.vercel.app' // Remplace par ton vrai lien frontend
+    'https://bookhouse-react-frontend.vercel.app' // Ton vrai lien frontend en ligne !
 ];
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Autorise les requêtes sans origine (comme Postman)
         if (!origin) return callback(null, true);
         
         if (allowedOrigins.indexOf(origin) === -1) {
@@ -39,11 +38,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 // --- ROUTES ---
-// Remplace tes imports de routes actuels par ceux-ci :
-app.use('/api/books', require('../routes/bookRoutes')); // Ajout de ../
-app.use('/api/user', require('../routes/authRoutes'));   // Ajout de ../
-app.use('/api/favorite', require('../routes/favoriteRoutes')); // Ajout de ../
-app.use('/api/discussion', require('../routes/discussionRoutes')); // Ajout de ../
+app.use('/api/books', require('../routes/bookRoutes')); 
+app.use('/api/user', require('../routes/authRoutes'));   
+app.use('/api/favorite', require('../routes/favoriteRoutes')); 
+app.use('/api/discussion', require('../routes/discussionRoutes')); 
 app.use('/api/messages', require('../routes/messageRoutes')); 
 
 // gestion 404
