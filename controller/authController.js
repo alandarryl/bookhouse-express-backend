@@ -1,8 +1,7 @@
-
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 
-
+// --- INSCRIPTION ---
 const registerUser = async (req, res) => {
     try {
         const { username, email, image_profil, password } = req.body;
@@ -20,12 +19,11 @@ const registerUser = async (req, res) => {
         const user = await User.create({ username, email, image_profil, password });
 
         if (user) {
-
-            // SET COOKIE HERE
+            // OPTION DES COOKIES MODIFIÉE POUR VERCEL (CROSS-DOMAIN)
             res.cookie("token", generateToken(user._id), {
                 httpOnly: true,
-                secure: false, // true in production
-                sameSite: "strict",
+                secure: true,       // Obligatoire sur Vercel (HTTPS)
+                sameSite: "none",    // Obligatoire pour autoriser localhost à recevoir le cookie de Vercel
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
 
@@ -52,7 +50,7 @@ const registerUser = async (req, res) => {
     }
 };
 
-//connexion
+// --- CONNEXION ---
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -60,10 +58,11 @@ const loginUser = async (req, res) => {
 
         if (user && (await user.matchPassword(password))) {
 
+            // OPTION DES COOKIES MODIFIÉE POUR VERCEL (CROSS-DOMAIN)
             res.cookie("token", generateToken(user._id), {
                 httpOnly: true,
-                secure: false,
-                sameSite: "strict",
+                secure: true,       // Obligatoire sur Vercel (HTTPS)
+                sameSite: "none",    // Obligatoire pour autoriser localhost à recevoir le cookie de Vercel
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
 
@@ -82,6 +81,7 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: "erreur lors de la connexion" });
     }
 };
+
 module.exports = {
     registerUser,
     loginUser
